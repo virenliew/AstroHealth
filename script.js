@@ -179,6 +179,7 @@ document.querySelector("#add-exercise").addEventListener('submit', async (e) => 
         document.getElementById("etype").focus();
         document.querySelector("#add-exercise").scrollIntoView();
         successCard.classList.add("hidden");
+        tripleBeep();
         return;
     }
     let missionDay = document.getElementById("mission-day").value;
@@ -399,6 +400,7 @@ async function connectHDLoop() {
     try {
         missionControlSock = await openSocket("ws://127.0.0.1:3003/");
         missionControlSock.onclose = () => {console.log("Closed Socket");connected = false;updateConnectStatus(false);reconnectLoop();}
+        missionControlSock.onmessage = handleWsMcResponse;
         connected = true;
         updateConnectStatus(true);
         let hostname = localStorage.getItem("hDeviceHost") || "";

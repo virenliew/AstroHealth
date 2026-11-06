@@ -4,6 +4,8 @@
     /* margin: 0; */
 }
 
+.mono {font-family: 'JetBrains Mono','Consolas', monospace;}
+
 #header-icon {
     background-color: #004ee9;
     width: 50px;
@@ -116,12 +118,24 @@ header {
     padding: 20px;
     margin: 12px;
     background-color: #cccccc30;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(14px);
+}
+
+.mission {
+   padding: 3px; 
+   width: 200px;
+   text-align: center;
+   
 }
 
 .field {
     display: flex;
     align-items: flex-end;
+}
+.scroll {
+    overflow-x: auto;
+    /* overflow-y:hidden; */
+    word-wrap: break-word;
 }
 
 .num {
@@ -282,6 +296,10 @@ option {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.active {
+    font-variation-settings: 'FILL' 1, 'opsz' 24,'GRAD' 0,'wght' 400;
 }
 
 @media (prefers-color-scheme: dark) {

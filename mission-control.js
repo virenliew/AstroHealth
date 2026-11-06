@@ -1,5 +1,6 @@
 // Mission control
 // Update an exercise from IDB
+let startDate = new Date(localStorage.getItem("launchDate") || "2026-01-01T00:00:00Z"); // starts on 1970 as fallback
 async function updateExercise() {
     // missionControlSock.send()
     let counti = await count(db, "exercise");
@@ -30,13 +31,57 @@ async function handleWsMcResponse(e) {
     try {
         let msg = e.data;
         const obj = JSON.parse(msg);
-        switch(obj) {
-            
+        switch(obj.type) {
+            case "mission_date":
+                startDate = new Date(obj.data);
+                localStorage.setItem("launchDate",obj.data);
+                break;
         }
     } catch(e) {
 
     }
 }
+
+let tripleBeep = async () => {
+    for (let i =0;i<3;i++) {
+        beep(600,0.1);await new Promise(res => setTimeout(res,200));
+    }
+};
+
+function beep(hz, dura) {
+    const ctx = new AudioContext();
+    oscil = ctx.createOscillator();
+    const buf = ctx.createBuffer(1, dura*44100, 44100);
+    const dat = buf.getChannelData(0);
+    
+    for (i=0;i<dura*44100;i++) {
+        const angle = Math.PI * 2 * hz * i / 44100;
+        dat[i] = Math.sin(angle);
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buf;
+    source.connect(ctx.destination);
+    source.start();
+
+    // oscil.frequency.value = hz;
+
+} 
+setInterval(() => {
+    let now = new Date();
+    let diff = now.getTime() - startDate.getTime();
+    // calculate day
+    
+    let day = Math.floor(diff / 86400000);
+    let msInDay = diff % 86400000;
+    let counter = msInDay;
+    let h = Math.floor(msInDay / 3600000);
+    let m = Math.floor((msInDay % 3600000) / 60000);
+    let s = Math.floor(((msInDay % 3600000) % 60000) / 1000);
+    console.log(h,m,s);
+    let missionCard = document.getElementById("mission-card");
+    missionCard.textContent = `Mission Day ${day.toString().padStart(3,"0")},  ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+
+},1000)
 
 async function handleWsHdResponse(e) {
     let footers = document.querySelectorAll(".health");
@@ -50,6 +95,7 @@ async function handleWsHdResponse(e) {
     let bo = document.querySelector("#bloodOxygen");
     let spacesuitPress = document.querySelector("#spacesuitPres");
     let btemp = document.querySelector("#btemp");
+    // Spo2: 95%;heart rate: 60-100;
     try {
         let msg = e.data;
         const obj = JSON.parse(msg);
@@ -78,6 +124,7 @@ async function  reconnectLoop() {
         try {
             missionControlSock = await openSocket("ws://127.0.0.1:3003/");
             missionControlSock.onclose = () => {console.log("Closed Socket");connected = false;updateConnectStatus(false);reconnectLoop();}
+            missionControlSock.onmessage = handleWsMcResponse;
             connected = true;
             updateConnectStatus(true);
             missionControlSock.send(JSON.stringify({
