@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/index.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=monitor_heart,home,monitoring,exercise,warning,device_thermostat,water_drop,cancel,check,delete,pill,archive,bedtime" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js" type="module"></script>
+    </head>
+    <body>
+        <header>
+            <div class="head">
+                <div class="material-symbols-outlined" id="header-icon">monitor_heart</div>
+                <h1>Astronaut Health</h1>
+            </div>
+            <div class="status-bar">
+                <span class="status-dot"></span>
+                <span id="connect-status">Offline</span>
+            </div>
+        </header>
+        <div class="modal hidden">
+            <div class="bg-modal">
+                <div class="card center anim-open-modal">
+                    <h2 id="modal-title">Clear Exercises</h2>
+                    <p id="modal-msg">Do you want to clear all exercises?</p>
+                    <div class="button-modal">
+                        <div class="button" id="modal-cancel">Cancel</div>
+                        <div class="button green" id="modal-confirm">Archive</div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div id="container">
+            <div id="sidebar">
+                <div id="home" class="tab-btn active"><span class="material-symbols-outlined">home</span>Home</div>
+                <div id="monitor_live" class="tab-btn"><span class="material-symbols-outlined">monitor_heart</span>Real-Time Monitoring</div>
+                <div id="health-records" class="tab-btn"><span class="material-symbols-outlined">monitoring</span>Health Records</div>
+                <div id="exercise" class="tab-btn"><span class="material-symbols-outlined">exercise</span>Exercises Records</div>
+                <div id="sleep" class="tab-btn"><span class="material-symbols-outlined">bedtime</span>Sleep</div>
+            </div>
+            <div id="home" class="health-panel">
+                <div id="spacer"></div>
+                <h1>Welcome back</h1>
+                <div id="connect-websockets">
+                    <h3>Connect your health devices</h3>
+                    <div>
+                        <span>Connect to: ws://</span>
+                        
+                        <input type="text" id="hostname" placeholder="hostname" class="input"><span>.local</span>
+                    </div> 
+                    <div id="spacer-connection"></div>
+                    <div class="button green" id="connect-device">Connect to Health Device</div>
+                </div>
+                <div class="footer">These data is for sample only. Connect a device to get accurate results.</div>
+                <h2>Health at a glance</h2>
+                <div class="card">
+                    <h2>Heart Rate</h2>
+                    <div class="field">
+                        <div id="heartRate" class="num">82</div><span>BPM</span>
+                    </div>
+                    <div class="footer health">Average Bpm: 77 BPM</div>
+                </div>
+                <div class="card">
+                    <h2>Blood Pressure</h2>
+                    <div class="field">
+                        <div id="blood_pressure" class="num">114/72</div><span>mmHg</span>
+                    </div>
+                    <div class="footer">Average Blood pressure: 101/72 mmHg</div>
+                </div>
+                <div class="card">
+                    <h2>Stress</h2>
+                    <div class="field">
+                        <div id="stress" class="num">5/10</div>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <div class="card warning">
+                    <h2><span class="material-symbols-outlined">warning</span> Health Alerts</h2>
+                    <ul id="alerts">
+                        <li>Lack of exercise: Lacking exercise will weaken the bone muscles and cause space osteospirosis.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="realtime-monitoring" class="health-panel">
+                <h2>Realtime Monitoring</h2>
+                <h3>Environmental Monitoring</h3>
+                <div class="card">
+                    <h2><span class="material-symbols-outlined">device_thermostat</span> Temperature</h2>
+                    <div class="field">
+                        <div id="temp" class="num">25.3</div><span>&deg;C</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <div class="card">
+                    <h2><span class="material-symbols-outlined">water_drop</span> Humidity</h2>
+                    <div class="field">
+                        <div id="hum" class="num">70.4</div><span>%RH</span>
+                    </div>
+                    <div class="footer">Humidier than usual</div>
+                </div>
+                <div class="card">
+                    <h2>Radiation Dose</h2>
+                    <div class="field">
+                        <div id="radiaRate" class="num">1.21</div><span>&micro;Sv/h</span><div class="num">/</div>
+                        <div id="radiaDay" class="num">1.14</div><span>mSv</span>
+                    </div>
+                    <div class="footer">Unhealthy for sensitive astronauts</div>
+                </div>
+                <div class="card">
+                    <h2>Cabin Pressure</h2>
+                    <div class="field">
+                        <div id="cabinPres" class="num">97</div><span>% of atmosphere</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <h3>Detailed health monitoring</h3>
+                <div class="card">
+                    <h2>SpO<sub>2</sub></h2>
+                    <div class="field">
+                        <div id="bloodOxygen" class="num">98</div><span>&percnt;</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <div class="card">
+                    <h2>Spacesuit Pressure</h2>
+                    <div class="field">
+                        <div id="spacesuitPres" class="num">--</div><span>% of atmosphere</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <div class="card">
+                    <h2>Body Temperature</h2>
+                    <div class="field">
+                        <div id="btemp" class="num">36.4</div><span>&deg;C</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <a href="javascript:tab(0)">Basic health metrics on top</a>
+            </div>
+            <div id="health-records" class="health-panel">
+                <div class="card">
+                    <h2>Health Records</h2>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Mission Day</td>
+                                    <td>Task carried out</td>
+                                    <td>Details</td>
+                                </tr>
+                            </thead>
+                            <tbody id="health-data">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>Health data is vital;so it may not deleted until mission ends</p>
+                    
+                </div>
+                <div class="card">
+                    <h2><span class="material-symbols-outlined">pill</span>Medications</h2>
+                    <p>The medications are provided by the Mission Control.Take the medcation on correct times.</p>
+
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Medication Name</td>
+                                    <td>Medication ID</td>
+                                    <td>Dosage</td>
+                                </tr>
+                            </thead>
+                            <tbody id="medication">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="exercise-records" class="health-panel">
+                <div class="card">
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>No</td>
+                                    <td>Mission Day</td>
+                                    <td>Exercise Type</td>
+                                    <td>Duration</td>
+                                    <td>Avg Heart Rate</td>
+                                </tr>
+                            </thead>
+                            <tbody id="exercise-data">
+                                <tr>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+                <div class="card">
+                    <canvas id="exerciseRecords"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Add a workout</h3>
+                    <div id="add-exercisef">
+                        <form id="add-exercise">
+                            <div class="field">
+                                <span>Type Of Exercise: </span>
+                                <select id="etype" class="input">
+                                    <option value="null" disabled selected>Select an exercise...</option>
+                                    <option value="Cardiovascular">Cardiovascular</option>
+                                    <option value="Resistive Loading">Resistive Loading (ARED)</option>
+                                    <option value="EVA Readiness">EVA Training</option>
+                                    <option value="Flexibility / Recovery">Flexibility & Recovery</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Mission Day: </label><input type="number" class="input" placeholder="Mission Day" value="1" min="1" id="mission-day">
+                            </div>
+                            <div class="field">
+                                <label>Duration: </label><input type="number" class="input" placeholder="Duration" value="30" min="30" id="duration"> min
+                            </div>
+                            <input type="submit" value="Save Exercise" class="green">
+                        </form>
+                        <div class="card error hidden" id="err-save">
+                            <h2><span class="material-symbols-outlined">cancel</span>Error</h2>
+                            <p id="err-msg-save">Failed to save data (unknown)</p>
+                        </div>
+                        <div class="card green hidden" id="suc-save">
+                            <h2><span class="material-symbols-outlined">check</span>Success</h2>
+                            <p>Exercise saved successfully!</p>
+                        </div>
+                        <div class="button green" id="delete-exercise"><span class="material-symbols-outlined">archive</span>Archive Exercise</div>
+                    </div>
+                </div>
+            </div>
+            <div id="sleep" class="health-panel">
+                <div class="card">
+                    <h2>Last Sleep duration</h2>
+                    <div class="field">
+                        <div id="sleep_duration" class="num">7</div><span>hr</span>
+                    </div>
+                    <div class="footer">Normal</div>
+                </div>
+                <div class="card">
+                    <h2>Health Records</h2>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>#</td>
+                                    <td>Deep Sleep</td>
+                                    <td>Light Sleep</td>
+                                    <td>Sleep Duration</td>
+                                </tr>
+                            </thead>
+                            <tbody id="sleep">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    <script src="mission-control.js"></script>   
+    <script src="script.js"></script>
+    </body>
+</html>
