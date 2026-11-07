@@ -7,10 +7,8 @@ async def on_connect(ws):
     try:
         task = asyncio.create_task(send(ws))
         async for message in ws:
-            # code here
-            # bounce the message back,example
-            print(message)
-            await ws.send(message)
+            # never receive message, one-way only. Ignore
+            pass
     except websockets.exceptions.ConnectionClosed:
         print("closed")
     finally:
@@ -22,8 +20,9 @@ async def main():
         await asyncio.Future()
 
 def get_data():
-    sample1 = random.randint(81,85)
-    return {"heartRate": sample1} # replace it later
+    sample1 = random.randint(90,110)
+    # sample1 = 101
+    return {"heartRate": sample1,"spo2": 94, "radiaRate":3000} # replace it later
 
 
 async def send(ws):
