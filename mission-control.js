@@ -126,6 +126,7 @@ async function handleWsHdResponse(e) {
             footers[0].textContent = "Heart rate abnormal";
         } else {
             updateCard(hrEle, false);
+            footers[0].textContent = "Normal";
         }
         bpEle.textContent = `${obj.bloodPressureSys || "--"}/${obj.bloodPressureDia || "--"} `;
         ctemp.textContent = obj.cabinTemp || "--.-";
