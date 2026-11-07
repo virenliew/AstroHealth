@@ -1,6 +1,10 @@
 // Mission control
 // Update an exercise from IDB
+let beeping = false;
 let startDate = new Date(localStorage.getItem("launchDate") || "2026-01-01T00:00:00Z"); // starts on 1970 as fallback
+let healthAlerts = [];
+let culmlativeMsv = 0;
+let lastUpdate = new Date();
 async function updateExercise() {
     // missionControlSock.send()
     let counti = await count(db, "exercise");
@@ -44,11 +48,12 @@ async function handleWsMcResponse(e) {
 
 let tripleBeep = async () => {
     for (let i =0;i<3;i++) {
-        beep(600,0.1);await new Promise(res => setTimeout(res,200));
+        await beep(600,0.15);
+        await new Promise(res => setTimeout(res,10));
     }
 };
 
-function beep(hz, dura) {
+async function beep(hz, dura) {
     const ctx = new AudioContext();
     oscil = ctx.createOscillator();
     const buf = ctx.createBuffer(1, dura*44100, 44100);
@@ -62,6 +67,8 @@ function beep(hz, dura) {
     source.buffer = buf;
     source.connect(ctx.destination);
     source.start();
+    await new Promise(res => setTimeout(res,dura*1000));
+    ctx.close();
 
     // oscil.frequency.value = hz;
 
@@ -83,6 +90,19 @@ setInterval(() => {
 
 },1000)
 
+function scheduleBeep() {
+    if (!beeping) {
+        beeping = true;
+        tripleBeep();
+        setTimeout(() => beeping = false, 3000)
+    }
+}
+
+function updateCard(ele, abnormal) {
+    const card = ele.closest(".card");
+    card.classList.toggle("abnormal",abnormal)
+}
+
 async function handleWsHdResponse(e) {
     let footers = document.querySelectorAll(".health");
     // Vital monitoring
@@ -100,12 +120,49 @@ async function handleWsHdResponse(e) {
         let msg = e.data;
         const obj = JSON.parse(msg);
         hrEle.textContent = obj.heartRate;
+        if (obj.heartRate >= 100 || obj.heartRate < 60) {
+            scheduleBeep();
+            updateCard(hrEle, true);
+            footers[0].textContent = "Heart rate abnormal";
+        } else {
+            updateCard(hrEle, false);
+        }
         bpEle.textContent = `${obj.bloodPressureSys || "--"}/${obj.bloodPressureDia || "--"} `;
         ctemp.textContent = obj.cabinTemp || "--.-";
         hum.textContent = obj.hum || "--.-";
         radia.rate.textContent = obj.radiaRate || "-.--";
+        // calcu
+        let timeDifference = new Date().getTime() - lastUpdate.getTime();
+        let add = ((obj.radiaRate || 0) * (timeDifference / 3600000)) / 1000;
+        culmlativeMsv += add;
+        radia.day.textContent = culmlativeMsv.toFixed(2);
+        lastUpdate = new Date();
+        if (obj.radiaRate >= 10000) {
+            footers[5].textContent = "Hazardous";
+            scheduleBeep();
+            updateCard(radia.rate, true);
+        } else if (obj.radiaRate >= 1000) {
+            footers[5].textContent = "Hazardous";
+            scheduleBeep();
+            updateCard(radia.rate, true);
+        } else if (obj.radiaRate >= 100) {
+            footers[5].textContent = "Warning";
+            updateCard(radia.rate, false);
+        } else if (obj.radiaRate) {
+            footers[5].textContent = "Normal"
+            updateCard(radia.rate, false);
+        } else {
+            footers[5].textContent="Not available";
+        }
         cpress.textContent = obj.cabinPressure || "--";
         bo.textContent = obj.spo2 || "--";
+        if (obj.spo2 < 95) {
+            scheduleBeep();
+            updateCard(bo, true);
+            footers[7].textContent = "Too low";
+        } else {
+            updateCard(bo, false); 
+        }
         spacesuitPress.textContent = obj.spaceSuitPres || "--";
         btemp.textContent = obj.bTemp || "--.-";
         if (!missionControlSock || missionControlSock.readyState != WebSocket.OPEN) return;

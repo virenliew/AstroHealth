@@ -302,6 +302,20 @@ option {
     font-variation-settings: 'FILL' 1, 'opsz' 24,'GRAD' 0,'wght' 400;
 }
 
+@keyframes pulse {
+    from {
+        background-color: #f00;
+    } 
+    to {
+        background-color: #ff00003f;
+    }
+}
+.abnormal {
+    background-color: #f00;
+    animation: pulse 0.7s linear infinite;
+    border-radius: 8px;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         background: linear-gradient(180deg, #131313,#002aff);
