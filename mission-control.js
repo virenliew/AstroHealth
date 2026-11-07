@@ -164,6 +164,14 @@ async function handleWsHdResponse(e) {
             footers[5].textContent="Not available";
         }
         cpress.textContent = obj.cabinPressure || "--";
+        if (obj.cabinPressure < 34.05) { // 34.05% atmosphere
+            footers[6].textContent = "Risk of hypoxia";
+            scheduleBeep();
+            updateCard(cpress, true);
+        } else {
+            footers[1].textContent = "Normal";
+            updateCard(cpress, false);
+        }
         bo.textContent = obj.spo2 || "--";
         if (obj.spo2 < 95) {
             scheduleBeep();

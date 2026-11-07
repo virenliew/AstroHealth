@@ -22,7 +22,7 @@ async def main():
 def get_data():
     sample1 = random.randint(90,110)
     # sample1 = 101
-    return {"heartRate": sample1,"spo2": 97, "radiaRate":67, "bTemp": 37.5, "bloodPressureSys": 141, "bloodPressureDia": 80} # replace it later
+    return {"heartRate": sample1,"spo2": 97, "radiaRate":67, "bTemp": 37.5, "bloodPressureSys": 141, "bloodPressureDia": 80,"cabinPressure": 34} # replace it later
 
 
 async def send(ws):
