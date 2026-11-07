@@ -285,7 +285,7 @@ async function fillTable() {
     console.log(items);
     // populate table
     table.innerHTML = "";
-    for (i = 0;i < items;i++) {
+    for (let i = 0;i < items;i++) {
         let result = await getValue(db, "exercise", i+1);
         console.log(result);
         if (result !== null && result !== undefined) {
