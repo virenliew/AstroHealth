@@ -129,6 +129,14 @@ async function handleWsHdResponse(e) {
             footers[0].textContent = "Normal";
         }
         bpEle.textContent = `${obj.bloodPressureSys || "--"}/${obj.bloodPressureDia || "--"} `;
+        if (obj.bloodPressureSys >= 140 || obj.bloodPressureDia >= 90) {
+            footers[1].textContent = "Hypertension risk";
+            scheduleBeep();
+            updateCard(bpEle, true);
+        } else {
+            footers[1].textContent = "Normal";
+            updateCard(bpEle, false);
+        }
         ctemp.textContent = obj.cabinTemp || "--.-";
         hum.textContent = obj.hum || "--.-";
         radia.rate.textContent = obj.radiaRate || "-.--";
