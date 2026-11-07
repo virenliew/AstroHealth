@@ -161,11 +161,26 @@ async function handleWsHdResponse(e) {
             scheduleBeep();
             updateCard(bo, true);
             footers[7].textContent = "Too low";
+        } else if (obj.spo2) {
+            updateCard(bo, false); 
+            footers[7].textContent = "Normal";
         } else {
             updateCard(bo, false); 
+            footers[7].textContent = "Not Available";
         }
         spacesuitPress.textContent = obj.spaceSuitPres || "--";
         btemp.textContent = obj.bTemp || "--.-";
+        if (obj.bTemp < 35.5 || obj.bTemp >= 40) {
+            scheduleBeep();
+            updateCard(btemp, true);
+            footers[7].textContent = "Abnormal";
+        } else if (obj.spo2) {
+            updateCard(btemp, false); 
+            footers[7].textContent = "Normal";
+        } else {
+            updateCard(btemp, false); 
+            footers[7].textContent = "Not Available";
+        }
         if (!missionControlSock || missionControlSock.readyState != WebSocket.OPEN) return;
         missionControlSock.send(JSON.stringify({
             type: "health_vitals",
