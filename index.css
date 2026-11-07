@@ -55,6 +55,7 @@ header {
     flex-direction: row;
     align-items: center;
     height: 100%;
+    max-width: 40%;
 }
 
 #container {
@@ -132,10 +133,10 @@ header {
     display: flex;
     align-items: flex-end;
 }
-.scroll {
-    overflow-x: auto;
-    /* overflow-y:hidden; */
-    word-wrap: break-word;
+.trunctate-on-no-space {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .num {
