@@ -403,7 +403,13 @@ async function connectHDLoop() {
         missionControlSock.onmessage = handleWsMcResponse;
         connected = true;
         updateConnectStatus(true);
+    } catch (err) {
+        console.log("Disconnected");
+        reconnectLoop();
+    }
+    try {
         let hostname = localStorage.getItem("hDeviceHost") || "";
+        document.querySelector("#hostname").value = hostname;
         connectUrl = "";
         if (hostname == "localhost") {
             connectUrl = "ws://localhost:8080";
@@ -411,9 +417,8 @@ async function connectHDLoop() {
             connectUrl = `ws://${hostname}.local:8080`;
         }
         if (hostname != "") connectHDLoop();
-    } catch (err) {
-        console.log("Disconnected");
-        reconnectLoop();
+    } catch(err) {
+        console.log("Disconnected health device - trying reconnect");
     }
     
     missionControlSock.send(JSON.stringify({
