@@ -4,4 +4,7 @@ desktop.ini
 __pycache__/
 *.pyc
 
+.vscode/*
+storage/*
+
 *.swp
