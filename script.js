@@ -64,6 +64,16 @@ function appendValue(db, objName, value) {
         req.onerror = (e) => rej(e.target.error);
     })
 }
+
+function changeValue(db, objName, value) {
+    return new Promise((res,rej) => {
+        const trans = db.transaction(objName, "readwrite");
+        const store = trans.objectStore(objName);
+        const req = store.put(value);
+        req.onsuccess = (e) => res(e.target.result);
+        req.onerror = (e) => rej(e.target.error);
+    })
+}
 function count(db, objName) {
     return new Promise((res,rej) => {
         const trans = db.transaction(objName, "readonly");
@@ -72,6 +82,14 @@ function count(db, objName) {
         req.onsuccess = (e) => res(e.target.result);
         req.onerror = (e) => rej(e.target.error);
     })
+}
+
+async function markSent(db, objName, start, end) {
+    for (let i = start;i<=end;i++){
+        const obj = await getValue(db, objName,i);
+        obj.sent = true;
+        await changeValue(db,objName, obj);
+    }
 }
 
 function openIdb(name) {

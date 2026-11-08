@@ -23,10 +23,10 @@ async function updateExercise() {
             object.data.payload.push(data);
             object.data.size++;
             remaining--;
-
         }
         missionControlSock.send(JSON.stringify(object));
-        object.data = {size:0,payload:[]};
+        await markSent(db, "exercise", index-until,index-1);
+        object.data = {size:0,astronaut_id: "123",payload:[]};
     }
 
 }
