@@ -157,10 +157,27 @@ async function handleWsHdResponse(e) {
             updateCard(ctemp, false);
         } else {
             footers[3].textContent = "Not available";
-            scheduleBeep();
             updateCard(ctemp, false);
         }
         hum.textContent = obj.hum || "--.-";
+        if (obj.hum >= 70) {
+            footers[4].textContent = "Very humid; risk of condensation";
+            scheduleBeep();
+            updateCard(hum, true);
+        } else if (obj.hum >= 60) {
+            footers[4].textContent = "Warning";
+            updateCard(hum, false);
+        } else if (obj.hum >= 30) {
+            footers[4].textContent = "Normal";
+            updateCard(hum, false);
+        } else if (obj.hum) {
+            footers[3].textContent = "Too low;risk of dry skin";
+            scheduleBeep()
+            updateCard(hum, true);
+        } else {
+            footers[3].textContent = "Not available";
+            updateCard(hum, false);
+        }
         radia.rate.textContent = obj.radiaRate || "-.--";
         // calcu
         let timeDifference = new Date().getTime() - lastUpdate.getTime();
