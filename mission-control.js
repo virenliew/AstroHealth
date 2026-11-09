@@ -138,6 +138,27 @@ async function handleWsHdResponse(e) {
             updateCard(bpEle, false);
         }
         ctemp.textContent = obj.cabinTemp || "--.-";
+        if (obj.cabinTemp >= 32) {
+            footers[3].textContent = "Very hot";
+            scheduleBeep();
+            updateCard(ctemp, true);
+        } else if (obj.cabinTemp >= 26.8) {
+            footers[3].textContent = "Hotter";
+            updateCard(ctemp, false);
+        } else if (obj.cabinTemp >= 18.3) {
+            footers[3].textContent = "Normal";
+            updateCard(ctemp, false);
+        } else if (obj.cabinTemp >= 13) {
+            footers[3].textContent = "Colder";
+            updateCard(ctemp, false);
+        } else if (obj.cabinTemp) {
+            footers[3].textContent = "Very cold";
+            updateCard(ctemp, false);
+        } else {
+            footers[3].textContent = "Not available";
+            scheduleBeep();
+            updateCard(ctemp, false);
+        }
         hum.textContent = obj.hum || "--.-";
         radia.rate.textContent = obj.radiaRate || "-.--";
         // calcu
@@ -169,7 +190,7 @@ async function handleWsHdResponse(e) {
             scheduleBeep();
             updateCard(cpress, true);
         } else {
-            footers[1].textContent = "Normal";
+            footers[6].textContent = "Normal";
             updateCard(cpress, false);
         }
         bo.textContent = obj.spo2 || "--";
