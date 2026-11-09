@@ -5,6 +5,7 @@ let startDate = new Date(localStorage.getItem("launchDate") || "2026-01-01T00:00
 let healthAlerts = [];
 let culmlativeMsv = 0;
 let lastUpdate = new Date();
+let missionDay = 0;
 async function updateExercise() {
     // missionControlSock.send()
     let counti = await count(db, "exercise");
@@ -87,7 +88,7 @@ setInterval(() => {
     console.log(h,m,s);
     let missionCard = document.getElementById("mission-card");
     missionCard.textContent = `Mission Day ${day.toString().padStart(3,"0")},  ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-
+    missionDay = day;
 },1000)
 
 function scheduleBeep() {

@@ -265,16 +265,26 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <td>#</td>
-                                    <td>Deep Sleep</td>
-                                    <td>Light Sleep</td>
-                                    <td>Sleep Duration</td>
+                                    <td>Day</td>
+                                    <td>Sleep duration</td>
+                                    <td>Awakenings</td>
+                                    <td>Sleep Quality (0-9)</td>
                                 </tr>
                             </thead>
-                            <tbody id="sleep">
+                            <tbody id="sleepTable">
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div class="card">
+                    <h3>Add sleep</h3>
+                    <form id="add-sleep">
+                        <div class="field"><label>Sleep duration: <input type="number" class="input" value="8" min="2" max="10" step="0.5" id="sleep-duration"> hours</label></div>
+
+                        <div class="field"><label>State the total awakening in the night: <input type="number" class="input" value="0" min="0" id="sleep-awake"></label></div>
+                        <div class="field"><label>How are you satisfied with your sleep:<br> Worst<input type="range" min="0" max="9" value="0" id="sleep-quality">Best</label></div>
+                        <input type="submit" class="green" value="Add sleep">
+                    </form>
                 </div>
             </div> 
         </div>

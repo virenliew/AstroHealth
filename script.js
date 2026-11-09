@@ -99,6 +99,9 @@ function openIdb(name) {
         req.onupgradeneeded = (e) => {
             const db = e.target.result;
             const store = setupStore(db, "exercise");
+            setupStore(db,"sleep");
+            setupStore(db,"health_records");
+            setupStore(db,"medication");
             // res(db)
         }
         req.onsuccess = (e) => {
@@ -178,7 +181,7 @@ document.querySelector("#delete-exercise").addEventListener("click",(e) => {
     showModal("Archive Exercises", "Are you sure you want to archive all exercises? Your exercises is still visible in Mission Control", async () => {
         console.log('delete');
         resetExercise(db);
-        await fillTable();
+        await fillExerciseTable();
         const data = await exerciseChartCalculate();
         updateChart(exerciseChart, data.labels, data.values);
     });
@@ -213,7 +216,7 @@ document.querySelector("#add-exercise").addEventListener('submit', async (e) => 
         await appendValue(db, "exercise", save);
         err.classList.add('hidden');
         successCard.classList.remove("hidden");
-        await fillTable();
+        await fillExerciseTable();
         const data = await exerciseChartCalculate();
         updateChart(exerciseChart, data.labels, data.values);
         await updateExercise();
@@ -239,6 +242,26 @@ connectBtn.addEventListener('click',async ()=> {
     }
     if (hostname != "") connectHDLoop();
 
+})
+
+document.querySelector("#add-sleep").addEventListener("submit",async (e) => {
+    e.preventDefault();
+    let dura = document.getElementById("sleep-duration");
+    let awakening = document.getElementById("sleep-awake");
+    let quality = document.getElementById("sleep-quality");
+    try {
+        const save = {
+            duration: parseFloat(dura.value),awakening: parseInt(awakening.value),sleepQuality: parseInt(quality.value),missionDay:missionDay,id: await count(db,"sleep")+1
+        }
+        console.log(save)
+        await appendValue(db, "sleep", save);
+        await fillTable("sleep","sleepTable",(obj) => {return [obj.missionDay,obj.duration,obj.awakening,obj.sleepQuality]});
+        showModal("Sleep record Saved", "Sleep record has been saved.", () => {console.log()}, "OK", "#0f0", false);
+    } catch(e) {
+        showModal("Sleep record Failed", "Failed to save sleep record: "+e, () => {console.log()}, "OK", "#0f0", false);
+        console.error(e)
+    }
+    document.querySelector("#add-exercise").reset();
 })
 
 document.addEventListener("scroll",(e) => {
@@ -297,7 +320,7 @@ tabBtn.forEach((v, i) => {
 
 // pushState(cards[1]);
 
-async function fillTable() {
+async function fillExerciseTable() {
     let table = document.getElementById("exercise-data");
     let items = await count(db,"exercise");
     console.log(items);
@@ -308,6 +331,29 @@ async function fillTable() {
         console.log(result);
         if (result !== null && result !== undefined) {
             table.innerHTML += `<tr><td>${result.id}</td><td>Day ${result.missionDay}</td><td>${result.eType}</td><td>${result.duration} min</td><td>${result.avgHR}</td></tr>`;
+        }
+    }
+}
+
+async function fillTable(dbName, tableId,insertCb) {
+    let table = document.getElementById(tableId);
+    let items = await count(db,dbName);
+    console.log(items);
+    // populate table
+    table.innerHTML = "";
+    let row = ""
+    for (let i = 0;i < items;i++) {
+        row = "";
+        let result = await getValue(db, dbName, i+1);
+        console.log(result);
+        if (result !== null && result !== undefined) {
+            row += `<tr>`;
+            insertCb(result).forEach((v,i) => {
+                row += `<td>${v}</td>`;
+            })
+            row += `</tr>`;
+            table.innerHTML += row;
+            console.log(i);
         }
     }
 }
@@ -400,7 +446,7 @@ async function connectHDLoop() {
 }
 
 (async () => {
-    db = await openIdb("exercise");
+    db = await openIdb("astronaut");
     if ('scrollRestoration' in history) {
         history.scrollRestoration = "auto";
     }
@@ -411,7 +457,8 @@ async function connectHDLoop() {
     } catch(e) {
         console.log(e);
     }
-    await fillTable();
+    await fillExerciseTable();
+    await fillTable("sleep","sleepTable",(obj) => {return [obj.missionDay,obj.duration,obj.awakening,obj.sleepQuality]});
     // count exercise in mission
     
     await new Promise((res) => setTimeout(res, 1000));
