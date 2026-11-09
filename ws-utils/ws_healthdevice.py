@@ -2,7 +2,9 @@ import asyncio
 import websockets
 import json
 import math,random
+import cli_menu
 # sampe1 = 80
+selected = 0
 async def on_connect(ws):
     try:
         task = asyncio.create_task(send(ws))
@@ -22,7 +24,21 @@ async def main():
 def get_data():
     sample1 = random.randint(90,96)
     # sample1 = 101
-    return {"heartRate": sample1,"spo2": 97, "radiaRate":67, "bTemp": 37.5, "bloodPressureSys": 138, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 26} # replace it later
+    if selected==0:
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": 50,"spaceSuitPres": 35} # replace it later
+    elif selected==1:
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": random.randint(18,20),"spaceSuitPres": None} # replace it later
+    elif selected==2:
+        return {"heartRate": random.randint(32,38),"spo2": 92, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": 50,"spaceSuitPres": None} # replace it later
+    elif selected==3:
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": random.randint(72,80),"spaceSuitPres": None} # replace it later
+    elif selected==4:
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(1714,1988), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": 50,"spaceSuitPres": None} # replace it later
+    elif selected==5:
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": random.randint(41,44), "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": random.randint(32,35), "hum": 50,"spaceSuitPres": None} # replace it later
+    elif selected==6:
+        return {"heartRate": random.randint(32,38),"spo2": 87, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": random.randint(23,26),"cabinTemp": 24, "hum": 3,"spaceSuitPres": None} # replace it later
+        
 
 
 async def send(ws):
@@ -32,4 +48,8 @@ async def send(ws):
             await ws.send(json.dumps(get_data()))
     except asyncio.CancelledError:
         pass
+
+SIMULATION = ["Normal","Dry","Hypoxia", "Wet", "Radiation", "High temperature", "Decompression"]
+selected = cli_menu.show_menu("Select a simulation",SIMULATION)
+print(f"Selected: {SIMULATION[selected]}")
 asyncio.run(main())
