@@ -9,6 +9,7 @@ def find_astronaut(storageJson, id):
         if i["astronaut_id"] == id:
             return i
     return None
+red_string = lambda x : f"\x1b[31m{x}\x1b[0m"
 async def on_connect(ws):
     try:
         
@@ -40,6 +41,10 @@ async def on_connect(ws):
                 os.makedirs("./storage", exist_ok=True)
                 with open("./storage/astronaut_exercises.json",'w') as f:
                     json.dump(exercise, f,indent=2)
+            elif obj.get("type") == "health_vitals":
+                data = obj.get("data").get("data")
+                hr = data["heartRate"]
+                print(f"Heart rate:{red_string(hr) if hr < 60 or hr>100 else hr}")
             await ws.send(json.dumps({'type': "mission_date", 'data': "2026-07-01T00:00:00Z"}))
     except websockets.exceptions.ConnectionClosed:
         print("closed")
