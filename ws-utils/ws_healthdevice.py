@@ -38,6 +38,8 @@ def get_data():
         return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": random.randint(41,44), "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": random.randint(32,35), "hum": 50,"spaceSuitPres": None} # replace it later
     elif selected==6:
         return {"heartRate": random.randint(32,38),"spo2": 87, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": random.randint(23,26),"cabinTemp": 24, "hum": 3,"spaceSuitPres": None} # replace it later
+    elif selected == 7:
+        return {"heartRate": random.randint(89,111),"spo2": random.randint(90,99), "radiaRate":random.randint(63,68), "bTemp": random.randint(38,42), "bloodPressureSys": random.randint(126,151), "bloodPressureDia": random.randint(70,100),"cabinPressure": random.randint(30,40),"cabinTemp": random.randint(10,20), "hum": random.randint(50,75),"spaceSuitPres": random.randint(30,40)} # replace it later
         
 
 
@@ -49,7 +51,7 @@ async def send(ws):
     except asyncio.CancelledError:
         pass
 
-SIMULATION = ["Normal","Dry","Hypoxia", "Wet", "Radiation", "High temperature", "Decompression"]
-selected = cli_menu.show_menu("Select a simulation",SIMULATION)
+SIMULATION = ["Normal","Dry","Hypoxia", "Wet", "Radiation", "High temperature", "Decompression","Random"]
+selected = cli_menu.show_menu("Select a simulation",SIMULATION,7)
 print(f"Selected: {SIMULATION[selected]}")
 asyncio.run(main())
