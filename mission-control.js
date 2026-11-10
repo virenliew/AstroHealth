@@ -12,7 +12,7 @@ async function updateExercise() {
     console.log(counti);
     // split
     let remaining = counti;
-    let object = {type: "exercise", data: {size: 0,astronaut_id: "123", payload: []}};
+    let object = {type: "exercise", data: {size: 0,astronaut_id: astroId, payload: []}};
     let index = 1;
     if (!missionControlSock || missionControlSock.readyState != WebSocket.OPEN) return;
     while (remaining > 0) {
@@ -27,7 +27,7 @@ async function updateExercise() {
         }
         missionControlSock.send(JSON.stringify(object));
         await markSent(db, "exercise", index-until,index-1);
-        object.data = {size:0,astronaut_id: "123",payload:[]};
+        object.data = {size:0,astronaut_id: astroId,payload:[]};
     }
 
 }
@@ -41,6 +41,24 @@ async function handleWsMcResponse(e) {
                 startDate = new Date(obj.data);
                 localStorage.setItem("launchDate",obj.data);
                 break;
+        }
+    } catch(e) {
+
+    }
+}
+
+async function handleWsMcLoginResponse(e) {
+    try {
+        let msg = e.data;
+        const obj = JSON.parse(msg);
+        switch(obj.type) {
+            case "mission_date":
+                startDate = new Date(obj.data);
+                localStorage.setItem("launchDate",obj.data);
+                break;
+            case "authorize":
+                localStorage.setItem("astronautId",obj.astroId);
+                location.reload();
         }
     } catch(e) {
 
@@ -254,7 +272,7 @@ async function handleWsHdResponse(e) {
         if (!missionControlSock || missionControlSock.readyState != WebSocket.OPEN) return;
         missionControlSock.send(JSON.stringify({
             type: "health_vitals",
-            data: {astronaut_id: "123", data: obj}
+            data: {astronaut_id: astroId, data: obj}
         }))
     } catch(e) {
         console.log(e);
@@ -280,5 +298,18 @@ async function  reconnectLoop() {
         }
         
         
+    }
+}
+async function  reconnectLoginLoop() {
+    if (!connected) {
+        // try to reconnect. If fail, set timeout
+        try {
+            missionControlSock = await openSocket("ws://127.0.0.1:3003/");
+            missionControlSock.onclose = () => {console.log("Closed Socket");connected = false;updateConnectStatus(false);}
+            missionControlSock.onmessage = handleWsMcLoginResponse;
+        } catch (err) {
+            console.log("cannot connect");
+            setTimeout(reconnectLoginLoop, 5000);
+        }
     }
 }

@@ -16,6 +16,9 @@ let connectUrl = "";
 let alertList = document.getElementById("alerts");
 let alertCard = document.getElementById("alert-card")
 
+// login
+let astroId = "";
+
 // Navigation
 function tab(n) {
     scrollActive = true;
@@ -470,7 +473,53 @@ async function connectHDLoop() {
     }
 }
 
+async function handleLogin() {
+    if (localStorage.getItem("astronautId") !== null) {
+        astroId = localStorage.getItem("astronautId");
+        return;
+    };
+    try {
+        missionControlSock = await openSocket("ws://127.0.0.1:3003/");
+        missionControlSock.onclose = () => {console.log("Closed Socket")}
+        missionControlSock.onmessage = handleWsMcLoginResponse;
+    } catch (err) {
+        console.log("Disconnected");
+        reconnectLoginLoop();
+    }
+    const submit = document.getElementById("loginBtn");
+    const guestBtn = document.getElementById("guestBtn");
+    const loginM = document.getElementById("login");
+    const field = loginM.querySelectorAll("input");
+
+    
+    submit.addEventListener('click', () => {
+        const astronautId = field[0].value;
+        const astronautPass = field[1].value;
+
+        missionControlSock.send(JSON.stringify({
+            type: "login",data: {"username":astronautId, "password":astronautPass}
+        }));
+        // missionControlSock.close();
+    })
+    guestBtn.addEventListener('click', () => {
+        astroId = "guest";
+        // missionControlSock.close();
+    })
+}
+
+
+
 (async () => {
+    handleLogin();
+    const loginM = document.getElementById("login");
+    while (!astroId) {
+        await new Promise(res => setTimeout(res,100));
+    }
+    const card = loginM.querySelector(".card");
+    card.classList.remove("anim-open-modal");
+    card.classList.add("anim-close-modal");
+    await new Promise(res => setTimeout(res,400));
+    loginM.classList.add("hidden");
     resetAlert();
     db = await openIdb("astronaut");
     if ('scrollRestoration' in history) {
@@ -511,6 +560,10 @@ async function connectHDLoop() {
     
     await new Promise((res) => setTimeout(res, 1000));
     try {
+        if (missionControlSock && missionControlSock.readyState == WebSocket.OPEN) {
+            await new Promise((res) => setTimeout(res, 4000));
+            missionControlSock.close();
+        }
         missionControlSock = await openSocket("ws://127.0.0.1:3003/");
         missionControlSock.onclose = () => {console.log("Closed Socket");connected = false;updateConnectStatus(false);reconnectLoop();}
         missionControlSock.onmessage = handleWsMcResponse;
@@ -535,7 +588,7 @@ async function connectHDLoop() {
     }
     
     missionControlSock.send(JSON.stringify({
-        type: "connect",data: {"astronaut_id": "123"}
+        type: "connect",data: {"astronaut_id": astroId}
     }));
     await updateExercise();
 })();

@@ -45,6 +45,21 @@ async def on_connect(ws):
                 data = obj.get("data").get("data")
                 hr = data["heartRate"]
                 print(f"Heart rate:{red_string(hr) if hr < 60 or hr>100 else hr}")
+            elif obj.get("type") == "login":
+                with open("./storage/astronaut.json","r") as f:
+                    obj1 = json.load(f)
+                    for a in obj1:
+                        auth = False
+                        if a["username"] == obj["data"]["username"]:
+                            print("username exist")
+                            if a["password"] == obj["data"]["password"]:
+                                auth = True
+                                await ws.send(json.dumps({'type':'authorize','astroId': obj["data"]["username"]}))
+                                break
+                    if not auth:
+                        await ws.send(json.dumps({'type':'authorize_err','message':'incorrect username or password'}))
+
+                        
             await ws.send(json.dumps({'type': "mission_date", 'data': "2026-07-01T00:00:00Z"}))
     except websockets.exceptions.ConnectionClosed:
         print("closed")
