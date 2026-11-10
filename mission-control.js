@@ -230,7 +230,7 @@ async function handleWsHdResponse(e) {
             updateCard(spacesuitPress, true);
         } else if (obj.spaceSuitPres > 26) { // 26% atmosphere
             footers[7].textContent = "Normal";
-            updateCard(spaceSuitPres, false);
+            updateCard(spacesuitPress, false);
         } else if (obj.spaceSuitPres) {
             footers[7].textContent = "Decompression in EMU; return to ISS immediately";
             scheduleBeep();
