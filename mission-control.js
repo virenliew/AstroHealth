@@ -172,7 +172,8 @@ async function handleWsHdResponse(e) {
             updateCard(ctemp, false);
         } else if (obj.cabinTemp) {
             footers[2].textContent = "Very cold";
-            updateCard(ctemp, false);
+            scheduleBeep();
+            updateCard(ctemp, true);
         } else {
             footers[2].textContent = "Not available";
             updateCard(ctemp, false);
