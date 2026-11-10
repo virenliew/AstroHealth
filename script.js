@@ -12,6 +12,10 @@ let connected = false;
 let connectBtn = document.querySelector("#connect-device");
 let connectUrl = "";
 
+// health alert
+let alertList = document.getElementById("alerts");
+let alertCard = document.getElementById("alert-card")
+
 // Navigation
 function tab(n) {
     scrollActive = true;
@@ -175,7 +179,15 @@ function showModal(title, text, onConfirm,btnTxt = "OK", btnColor = "#ccc", show
     confirm.style.backgroundColor = btnColor;
 }
 
-
+// alerts
+function resetAlert() {
+    alertCard.classList.remove("warning");
+    alertList.innerHTML = "";
+}
+function addAlert(str) {
+    alertCard.classList.add("warning");
+    alertList.innerHTML = `<li>${str}</li>`;
+}
 
 document.querySelector("#delete-exercise").addEventListener("click",(e) => {
     showModal("Archive Exercises", "Are you sure you want to archive all exercises? Your exercises is still visible in Mission Control", async () => {
@@ -256,6 +268,19 @@ document.querySelector("#add-sleep").addEventListener("submit",async (e) => {
         console.log(save)
         await appendValue(db, "sleep", save);
         await fillTable("sleep","sleepTable",(obj) => {return [obj.missionDay,obj.duration,obj.awakening,obj.sleepQuality]});
+        const sleepEle = document.getElementById("sleep_duration");
+        sleepEle.textContent = save.duration;
+        let footer = document.querySelectorAll(".health")[9];
+        if (save) {
+            if (save.duration < 6) {
+                updateCard(sleepEle, true);
+                footer.textContent = "Lack of sleep";
+                scheduleBeep();
+            } else {
+                updateCard(sleepEle, false);
+                footer.textContent = "Normal";
+            }
+        }
         showModal("Sleep record Saved", "Sleep record has been saved.", () => {console.log()}, "OK", "#0f0", false);
     } catch(e) {
         showModal("Sleep record Failed", "Failed to save sleep record: "+e, () => {console.log()}, "OK", "#0f0", false);
@@ -446,6 +471,7 @@ async function connectHDLoop() {
 }
 
 (async () => {
+    resetAlert();
     db = await openIdb("astronaut");
     if ('scrollRestoration' in history) {
         history.scrollRestoration = "auto";
@@ -459,6 +485,28 @@ async function connectHDLoop() {
     }
     await fillExerciseTable();
     await fillTable("sleep","sleepTable",(obj) => {return [obj.missionDay,obj.duration,obj.awakening,obj.sleepQuality]});
+    const sleepCount = await count(db, "sleep");
+    const lastSleep = await getValue(db, "sleep", sleepCount);
+    const sleepEle = document.getElementById("sleep_duration");
+    if (lastSleep) {
+        sleepEle.textContent = lastSleep.duration;
+    } else {
+        sleepEle.textContent = "--";
+    }
+    
+    let footer = document.querySelectorAll(".health")[9];
+    if (lastSleep) {
+        if (lastSleep.duration < 6) {
+            updateCard(sleepEle, true);
+            footer.textContent = "Lack of sleep";
+            scheduleBeep();
+            addAlert("Lack of sleep; Sleep at least 8.5 hours.")
+        } else {
+            updateCard(sleepEle, false);
+            footer.textContent = "Normal";
+        }
+        
+    }
     // count exercise in mission
     
     await new Promise((res) => setTimeout(res, 1000));

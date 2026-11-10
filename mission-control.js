@@ -140,35 +140,35 @@ async function handleWsHdResponse(e) {
         }
         ctemp.textContent = obj.cabinTemp || "--.-";
         if (obj.cabinTemp >= 32) {
-            footers[3].textContent = "Very hot";
+            footers[2].textContent = "Very hot";
             scheduleBeep();
             updateCard(ctemp, true);
         } else if (obj.cabinTemp >= 26.8) {
-            footers[3].textContent = "Hotter";
+            footers[2].textContent = "Hotter";
             updateCard(ctemp, false);
         } else if (obj.cabinTemp >= 18.3) {
-            footers[3].textContent = "Normal";
+            footers[2].textContent = "Normal";
             updateCard(ctemp, false);
         } else if (obj.cabinTemp >= 13) {
-            footers[3].textContent = "Colder";
+            footers[2].textContent = "Colder";
             updateCard(ctemp, false);
         } else if (obj.cabinTemp) {
-            footers[3].textContent = "Very cold";
+            footers[2].textContent = "Very cold";
             updateCard(ctemp, false);
         } else {
-            footers[3].textContent = "Not available";
+            footers[2].textContent = "Not available";
             updateCard(ctemp, false);
         }
         hum.textContent = obj.hum || "--.-";
         if (obj.hum >= 70) {
-            footers[4].textContent = "Very humid; risk of condensation";
+            footers[3].textContent = "Very humid; risk of condensation";
             scheduleBeep();
             updateCard(hum, true);
         } else if (obj.hum >= 60) {
-            footers[4].textContent = "Warning";
+            footers[3].textContent = "Warning";
             updateCard(hum, false);
         } else if (obj.hum >= 30) {
-            footers[4].textContent = "Normal";
+            footers[3].textContent = "Normal";
             updateCard(hum, false);
         } else if (obj.hum) {
             footers[3].textContent = "Too low;risk of dry skin";
@@ -186,55 +186,70 @@ async function handleWsHdResponse(e) {
         radia.day.textContent = culmlativeMsv.toFixed(2);
         lastUpdate = new Date();
         if (obj.radiaRate >= 10000) {
-            footers[5].textContent = "Hazardous";
+            footers[4].textContent = "Hazardous";
             scheduleBeep();
             updateCard(radia.rate, true);
         } else if (obj.radiaRate >= 1000) {
-            footers[5].textContent = "Hazardous";
+            footers[4].textContent = "Hazardous";
             scheduleBeep();
             updateCard(radia.rate, true);
         } else if (obj.radiaRate >= 100) {
-            footers[5].textContent = "Warning";
+            footers[4].textContent = "Warning";
             updateCard(radia.rate, false);
         } else if (obj.radiaRate) {
-            footers[5].textContent = "Normal"
+            footers[4].textContent = "Normal"
             updateCard(radia.rate, false);
         } else {
-            footers[5].textContent="Not available";
+            footers[4].textContent="Not available";
         }
         cpress.textContent = obj.cabinPressure || "--";
         if (obj.cabinPressure < 34.05) { // 34.05% atmosphere
-            footers[6].textContent = "Risk of hypoxia";
+            footers[5].textContent = "Risk of hypoxia";
             scheduleBeep();
             updateCard(cpress, true);
         } else {
-            footers[6].textContent = "Normal";
+            footers[5].textContent = "Normal";
             updateCard(cpress, false);
         }
         bo.textContent = obj.spo2 || "--";
         if (obj.spo2 < 95) {
             scheduleBeep();
             updateCard(bo, true);
-            footers[7].textContent = "Too low";
+            footers[6].textContent = "Too low";
         } else if (obj.spo2) {
             updateCard(bo, false); 
-            footers[7].textContent = "Normal";
+            footers[6].textContent = "Normal";
         } else {
             updateCard(bo, false); 
-            footers[7].textContent = "Not Available";
+            footers[6].textContent = "Not Available";
         }
         spacesuitPress.textContent = obj.spaceSuitPres || "--";
+        if (obj.spaceSuitPres > 32) { // 32% atmosphere
+            footers[7].textContent = "Overpressure alert; movement may be blocked";
+            scheduleBeep();
+            updateCard(spacesuitPress, true);
+        } else if (obj.spaceSuitPres > 26) { // 26% atmosphere
+            footers[7].textContent = "Normal";
+            updateCard(spaceSuitPres, false);
+        } else if (obj.spaceSuitPres) {
+            footers[7].textContent = "Decompression in EMU; return to ISS immediately";
+            scheduleBeep();
+            updateCard(spacesuitPress, true);
+        } else {
+            footers[7].textContent = "Start a spacewalk; no spacewalk in progress";
+            updateCard(spacesuitPress, false);
+        }
         btemp.textContent = obj.bTemp || "--.-";
         if (obj.bTemp < 35.5 || obj.bTemp >= 40) {
             scheduleBeep();
             updateCard(btemp, true);
-            footers[7].textContent = "Abnormal";
-        } else if (obj.spo2) {
+            footers[8].textContent = "Abnormal";
+        } else if (obj.bTemp) {
             updateCard(btemp, false); 
-            footers[7].textContent = "Normal";
+            footers[8].textContent = "Normal";
         } else {
             updateCard(btemp, false); 
-            footers[7].textContent = "Not Available";
+            footers[8].textContent = "Not Available";
         }
         if (!missionControlSock || missionControlSock.readyState != WebSocket.OPEN) return;
         missionControlSock.send(JSON.stringify({

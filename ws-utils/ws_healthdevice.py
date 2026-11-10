@@ -25,7 +25,7 @@ def get_data():
     sample1 = random.randint(90,96)
     # sample1 = 101
     if selected==0:
-        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": 50,"spaceSuitPres": 35} # replace it later
+        return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": 50,"spaceSuitPres": 28} # replace it later
     elif selected==1:
         return {"heartRate": sample1,"spo2": 99, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": 96,"cabinTemp": 24, "hum": random.randint(18,20),"spaceSuitPres": None} # replace it later
     elif selected==2:
