@@ -139,7 +139,7 @@ async function handleWsHdResponse(e) {
         let msg = e.data;
         const obj = JSON.parse(msg);
         hrEle.textContent = obj.heartRate;
-        if (obj.heartRate >= 100 || obj.heartRate < 60) {
+        if (obj.heartRate >= 140 || obj.heartRate < 60) {
             scheduleBeep();
             updateCard(hrEle, true);
             footers[0].textContent = "Heart rate abnormal";
@@ -157,17 +157,17 @@ async function handleWsHdResponse(e) {
             updateCard(bpEle, false);
         }
         ctemp.textContent = obj.cabinTemp || "--.-";
-        if (obj.cabinTemp >= 32) {
+        if (obj.cabinTemp >= 27) {
             footers[2].textContent = "Very hot";
             scheduleBeep();
             updateCard(ctemp, true);
-        } else if (obj.cabinTemp >= 26.8) {
+        } else if (obj.cabinTemp >= 25) {
             footers[2].textContent = "Hotter";
             updateCard(ctemp, false);
-        } else if (obj.cabinTemp >= 18.3) {
+        } else if (obj.cabinTemp >= 20) {
             footers[2].textContent = "Normal";
             updateCard(ctemp, false);
-        } else if (obj.cabinTemp >= 13) {
+        } else if (obj.cabinTemp >= 18) {
             footers[2].textContent = "Colder";
             updateCard(ctemp, false);
         } else if (obj.cabinTemp) {
@@ -179,7 +179,7 @@ async function handleWsHdResponse(e) {
             updateCard(ctemp, false);
         }
         hum.textContent = obj.hum || "--.-";
-        if (obj.hum >= 70) {
+        if (obj.hum >= 75) {
             footers[3].textContent = "Very humid; risk of condensation";
             scheduleBeep();
             updateCard(hum, true);
@@ -188,6 +188,9 @@ async function handleWsHdResponse(e) {
             updateCard(hum, false);
         } else if (obj.hum >= 30) {
             footers[3].textContent = "Normal";
+            updateCard(hum, false);
+        } else if (obj.hum >= 25) {
+            footers[3].textContent = "Dry warning";
             updateCard(hum, false);
         } else if (obj.hum) {
             footers[3].textContent = "Too low;risk of dry skin";
@@ -224,6 +227,10 @@ async function handleWsHdResponse(e) {
         cpress.textContent = obj.cabinPressure || "--";
         if (obj.cabinPressure < 34.05) { // 34.05% atmosphere
             footers[5].textContent = "Risk of hypoxia";
+            scheduleBeep();
+            updateCard(cpress, true);
+        } else if (obj.cabinPressure > 101.65) {
+            footers[5].textContent = "Overpressure";
             scheduleBeep();
             updateCard(cpress, true);
         } else {
