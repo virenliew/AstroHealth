@@ -1,0 +1,2 @@
+# Requirements for AstroHealth: WebSockets
+websockets
