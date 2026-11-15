@@ -70,7 +70,7 @@ header {
 }
 
 .instruct {
-    animation: pulse2 0.7s infinite linear;
+    animation: pulse2 2s infinite linear;
     
 }
 
@@ -162,6 +162,7 @@ header {
 
 .footer {
     font-weight: 200;
+    font-size: 16px;
 }
 
 #connect-websockets {
