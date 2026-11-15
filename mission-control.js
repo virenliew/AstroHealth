@@ -148,7 +148,7 @@ async function handleWsHdResponse(e) {
             footers[0].textContent = "Normal";
         }
         bpEle.textContent = `${obj.bloodPressureSys || "--"}/${obj.bloodPressureDia || "--"} `;
-        if (obj.bloodPressureSys >= 140 || obj.bloodPressureDia >= 90) {
+        if (obj.bloodPressureSys >= 120 || obj.bloodPressureDia >= 80) {
             footers[1].textContent = "Hypertension risk";
             scheduleBeep();
             updateCard(bpEle, true);

@@ -44,7 +44,7 @@ async def on_connect(ws):
             elif obj.get("type") == "health_vitals":
                 data = obj.get("data").get("data")
                 hr = data["heartRate"]
-                print(f"Heart rate:{red_string(hr) if hr < 60 or hr>100 else hr}")
+                print(f"Heart rate:{red_string(hr) if hr < 60 or hr>140 else hr}")
             elif obj.get("type") == "login":
                 with open("./storage/astronaut.json","r") as f:
                     obj1 = json.load(f)

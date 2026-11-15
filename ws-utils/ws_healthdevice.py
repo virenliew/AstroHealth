@@ -39,7 +39,7 @@ def get_data():
     elif selected==6:
         return {"heartRate": random.randint(32,38),"spo2": 87, "radiaRate":random.randint(63,68), "bTemp": 36.1, "bloodPressureSys": 101, "bloodPressureDia": 75,"cabinPressure": random.randint(23,26),"cabinTemp": 24, "hum": 3,"spaceSuitPres": None} # replace it later
     elif selected == 7:
-        return {"heartRate": random.randint(89,111),"spo2": random.randint(90,99), "radiaRate":random.randint(63,68), "bTemp": random.randint(38,42), "bloodPressureSys": random.randint(126,151), "bloodPressureDia": random.randint(70,100),"cabinPressure": random.randint(30,40),"cabinTemp": random.randint(10,20), "hum": random.randint(50,75),"spaceSuitPres": random.randint(30,40)} # replace it later
+        return {"heartRate": random.randint(100,150),"spo2": random.randint(90,99), "radiaRate":random.randint(63,68), "bTemp": random.randint(38,42), "bloodPressureSys": random.randint(100,130), "bloodPressureDia": random.randint(70,100),"cabinPressure": random.randint(30,40),"cabinTemp": random.randint(10,20), "hum": random.randint(60,90),"spaceSuitPres": random.randint(30,40)} # replace it later
         
 
 
