@@ -3,6 +3,9 @@
 ## Description
 AstroHealth is an application that monitors astronauts' health in real time. We developed a web app that monitors health vitals from an astronaut and send that vitals  to Mission Control. Communication of Astronauts in deep space faces latency, so our solution works by establishing a WebSocket connection to Mission Control.
 
+## Demo
+Visit our [demo](https://virenliew.github.io/AstroHealth/) on GitHub Pages.
+
 ## Setup
 To setting up a server, you need:
 - Server software
